@@ -450,10 +450,9 @@ export default function Home() {
       </section>
       </div>
 
-      {/* Hire — the TextLoop ribbon and the Three.js character were
-          both removed at the user's request. A plain heading, a
-          slide-to-hire control (pattern idea from cuedesign.space,
-          original code), and the unchanged contact tiles below. */}
+      {/* Hire — the TextLoop ribbon, the Three.js character, and the
+          slide-to-hire control were all removed at the user's
+          request. A plain heading and the contact tiles below. */}
       <section id="hire" className="relative z-10 pb-24">
         <div className="mx-auto max-w-5xl px-4 pt-4 text-center">
           <h2 className="font-pixelify text-4xl text-yellow-400 sm:text-5xl">Hire me</h2>
