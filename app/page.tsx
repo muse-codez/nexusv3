@@ -7,7 +7,7 @@ import { ArrowUpRight, Envelope, Instagram, Play } from "reicon-react";
 import TargetCursor from "@/components/TargetCursor";
 
 import IntroLoader from "@/components/IntroLoader";
-import SlideToHire from "@/components/SlideToHire";
+
 
 // NexusFX v2 — original homepage, inspired in general structure only by
 // notenemyok.com (pill nav, full-height hero, clients panel, video grid,
@@ -467,9 +467,6 @@ export default function Home() {
               as one section instead of floating tiles. No site's
               layout or wording copied; no new copy added. */}
           <div className="relative mt-10 overflow-hidden bg-[#16161a] p-6 border border-white/10 sm:p-8">
-            <div className="relative mb-6">
-              <SlideToHire />
-            </div>
             <div className="relative grid gap-6 text-left sm:grid-cols-5">
             <div className="group relative overflow-hidden bg-zinc-900 p-8 shadow-xl ring-1 ring-zinc-700 transition-shadow duration-500 motion-reduce:transition-none hover:shadow-[0_0_40px_rgba(163,230,53,0.35)] hover:ring-lime-400/60 sm:col-span-3">
               {/* Primary tile: solid zinc at rest, lime fill on
