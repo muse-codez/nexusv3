@@ -308,7 +308,16 @@ export default function Home() {
       <section id="clients" className="relative z-20 w-full px-2 pb-24 sm:px-4">
         <motion.div style={{ y: reduceMotion ? 0 : cardY }} className="v3-arch relative w-full overflow-hidden bg-[#16161a] border border-white/10 px-4 pb-12 pt-20 sm:px-8 sm:pt-24 lg:px-12">
           <h2 className="relative text-center font-pixelify text-4xl font-bold leading-tight tracking-wide text-yellow-400 sm:text-6xl lg:text-7xl">
-            Creators I&apos;ve worked with
+            <span className="group relative inline-block">
+              Creators I&apos;ve worked with
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 text-yellow-300">
+                <span className="v3-sparkle absolute -top-3 left-1/4 text-xs" style={{ animationDelay: "0s" }}>✦</span>
+                <span className="v3-sparkle absolute -top-2 right-1/4 text-sm" style={{ animationDelay: "0.2s" }}>✧</span>
+                <span className="v3-sparkle absolute -left-4 top-1/2 text-base" style={{ animationDelay: "0.4s" }}>✦</span>
+                <span className="v3-sparkle absolute -right-4 top-1/3 text-xs" style={{ animationDelay: "0.3s" }}>✧</span>
+                <span className="v3-sparkle absolute -bottom-3 left-1/2 text-sm" style={{ animationDelay: "0.5s" }}>✦</span>
+              </span>
+            </span>
           </h2>
           <div
             className="relative mx-auto mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:w-[46%] lg:grid-cols-3"
@@ -387,7 +396,16 @@ export default function Home() {
               which now expands to the end of the showcase. */}
           <div id="videos" className="relative mt-16 scroll-mt-24 text-center">
             <h2 className="mt-6 font-pixelify text-4xl font-bold leading-tight tracking-wide text-purple-400 sm:text-6xl lg:text-7xl">
-              Recent edits
+              <span className="group relative inline-block">
+                Recent edits
+                <span aria-hidden="true" className="pointer-events-none absolute inset-0 text-purple-300">
+                  <span className="v3-sparkle absolute -top-3 left-1/4 text-xs" style={{ animationDelay: "0.1s" }}>✦</span>
+                  <span className="v3-sparkle absolute -top-2 right-1/4 text-sm" style={{ animationDelay: "0.3s" }}>✧</span>
+                  <span className="v3-sparkle absolute -left-4 top-1/2 text-base" style={{ animationDelay: "0.5s" }}>✦</span>
+                  <span className="v3-sparkle absolute -right-4 top-1/3 text-xs" style={{ animationDelay: "0s" }}>✧</span>
+                  <span className="v3-sparkle absolute -bottom-3 left-1/2 text-sm" style={{ animationDelay: "0.4s" }}>✦</span>
+                </span>
+              </span>
             </h2>
           </div>
         <div className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -455,7 +473,18 @@ export default function Home() {
           request. A plain heading and the contact tiles below. */}
       <section id="hire" className="relative z-10 pb-24">
         <div className="mx-auto max-w-5xl px-4 pt-4 text-center">
-          <h2 className="font-pixelify text-4xl font-bold leading-tight tracking-wide text-yellow-400 sm:text-6xl lg:text-7xl">Hire Me</h2>
+          <h2 className="font-pixelify text-4xl font-bold leading-tight tracking-wide text-yellow-400 sm:text-6xl lg:text-7xl">
+            <span className="group relative inline-block">
+              Hire Me
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 text-yellow-300">
+                <span className="v3-sparkle absolute -top-3 left-1/4 text-xs" style={{ animationDelay: "0.2s" }}>✦</span>
+                <span className="v3-sparkle absolute -top-2 right-1/4 text-sm" style={{ animationDelay: "0s" }}>✧</span>
+                <span className="v3-sparkle absolute -left-4 top-1/2 text-base" style={{ animationDelay: "0.4s" }}>✦</span>
+                <span className="v3-sparkle absolute -right-4 top-1/3 text-xs" style={{ animationDelay: "0.5s" }}>✧</span>
+                <span className="v3-sparkle absolute -bottom-3 left-1/2 text-sm" style={{ animationDelay: "0.3s" }}>✦</span>
+              </span>
+            </span>
+          </h2>
         </div>
         <div className="mx-auto max-w-5xl px-4">
           {/* Hire panel, inspired by the researched portfolios
