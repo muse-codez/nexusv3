@@ -1,17 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Pixelify_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Pixelify Sans from Google Fonts — pixel style, but far more
+// readable than a blocky pixel font, so it works for the name and
+// titles, not just tiny labels.
+const pixelify = Pixelify_Sans({
+  variable: "--font-pixelify-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+// Minecraft.ttf supplied by the user, loaded locally, for small
+// pixel labels only. Balloon / bubble fonts (BALLOON DREAMS,
+// Fungky Brow) were removed at the user's request.
+const minecraftFont = localFont({
+  src: "./fonts/Minecraft.ttf",
+  variable: "--font-minecraft-font",
+  weight: "400",
 });
 
+// Metadata copied from v1/v2 (same client, same copy) — title,
+// description, keywords, openGraph and twitter. v3 improvement:
+// metadataBase is set to v3's confirmed Vercel domain, so the
+// relative /og image resolves correctly for social crawlers.
 export const metadata: Metadata = {
   metadataBase: new URL("https://nexusv3-tau.vercel.app"),
   title: "NexusFX | Video Editor for YouTubers & Gaming Creators",
@@ -27,13 +39,38 @@ export const metadata: Metadata = {
     "YouTube video editing services",
     "Minecraft video editor",
   ],
+  icons: {
+    icon: "/favicon.ico",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://nexusv3-tau.vercel.app",
+    title: "NexusFX | Video Editor for YouTubers & Gaming Creators",
+    description:
+      "NexusFX edits high-retention YouTube and gaming videos for creators including GamerFleet and I. M. Bixu.",
+    images: [
+      {
+        url: "/og",
+        width: 1200,
+        height: 630,
+        alt: "NexusFX — Video Editor for YouTubers & Gaming Creators",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NexusFX | Video Editor for YouTubers & Gaming Creators",
+    description:
+      "NexusFX edits high-retention YouTube and gaming videos for creators including GamerFleet and I. M. Bixu.",
+    images: ["/og"],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${pixelify.variable} ${minecraftFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

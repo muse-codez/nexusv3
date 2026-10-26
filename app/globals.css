@@ -1,40 +1,41 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 
-@theme {
-  --font-display: "Archivo", "Inter", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --color-ink: #0c1117;
-  --color-panel: #131a24;
-  --color-line: #233042;
-  --color-amber: #ffb703;
-  --color-mist: #9aa7b4;
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
-html {
-  scroll-behavior: smooth;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* No Geist: body uses a plain system stack, custom fonts below
+     are the only display fonts on the site. */
+  --font-sans: ui-sans-serif, system-ui, Arial, Helvetica, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-minecraft: var(--font-minecraft-font);
+  --font-pixelify: var(--font-pixelify-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 body {
-  background: #0c1117;
-  color: #f2f4f6;
-  font-family: "Inter", system-ui, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-::selection {
-  background: #ffb703;
-  color: #0c1117;
-}
-
-.v3-fade-up {
-  animation: v3-fade-up 0.8s ease both;
-}
-
-@keyframes v3-fade-up {
+/* Gaming animations for v2 only: entrance, float, glow, gradient.
+   Kept to transforms / opacity / background-position so they stay
+   smooth, and disabled for reduced-motion users. */
+@keyframes v2-fade-up {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -42,11 +43,356 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+.v2-fade-up {
+  animation: v2-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes v2-float {
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  .v3-fade-up {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.v2-float {
+  animation: v2-float 4s ease-in-out infinite;
+}
+
+@keyframes v2-glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(163, 230, 53, 0);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(163, 230, 53, 0.55);
+  }
+}
+
+.v2-glow-pulse {
+  animation: v2-glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes v2-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.v2-gradient-text {
+  background-size: 200% auto;
+  animation: v2-gradient-shift 6s ease-in-out infinite;
+}
+
+@keyframes v2-bounce-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.v2-bounce-soft {
+  animation: v2-bounce-soft 1.6s ease-in-out infinite;
+}
+
+/* Shine sweep, original implementation of the pattern from the
+   breakdown: a skewed white strip that sweeps left-to-right twice
+   on hover of its parent (.group or .v2-shine-wrap). */
+.v2-shine-beam {
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+@keyframes v2-shine-sweep {
+  0% {
+    left: -140%;
+  }
+  100% {
+    left: 170%;
+  }
+}
+
+.group:hover .v2-shine-beam,
+.v2-shine-wrap:hover .v2-shine-beam {
+  animation: v2-shine-sweep 1s cubic-bezier(0.2, 0.8, 0.2, 1) 2;
+}
+
+/* Writing animation on the hero title, on hover only: the title
+   reveals left-to-right in 7 steps (one per letter of NexusFX),
+   like it is being written. Clip-path is used so the gradient
+   text and layout do not shift during the reveal. */
+/* Wobble on the hero title: a gentle, continuous side-to-side
+   rock (only ±1.5°, so it stays readable), on the title wrapper
+   so the title stays readable. */
+@keyframes v2-wobble {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-1.5deg);
+  }
+  75% {
+    transform: rotate(1.5deg);
+  }
+}
+
+.v2-wobble {
+  transform-origin: center;
+  animation: v2-wobble 3s ease-in-out infinite;
+}
+
+
+/* Intro loader: logo flips (rotateY) while zooming in. */
+/* Intro loader: logo flips only, no zoom. The black screen
+   itself then slides up to reveal the site. */
+@keyframes v2-intro-flip {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(360deg);
+    opacity: 1;
+  }
+}
+
+.v2-intro-flip {
+  animation: v2-intro-flip 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-style: preserve-3d;
+}
+
+
+
+/* Navbar entrance: drops in from above on load. */
+@keyframes v2-nav-drop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.v2-nav-drop {
+  animation: v2-nav-drop 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Navbar scroll pop: when the background appears on scroll,
+   the bar pops in slightly (0.96 -> 1.02 -> 1) instead of
+   just fading in. */
+@keyframes v2-nav-pop {
+  0% {
+    transform: scale(0.96);
+  }
+  60% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.v2-nav-pop {
+  animation: v2-nav-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Pixel design, corrected: pixels are MANY small squares, like
+   the boxes a pixel font is built from — not one big square
+   box. So corners are a staircase of 4px steps (3 small squares
+   per corner), cards carry a texture of tiny 4px squares, and
+   strips are rows of alternating 6px squares. */
+.v2-pixel-corners {
+  clip-path: polygon(
+    0 12px, 4px 12px, 4px 8px, 8px 8px, 8px 4px, 12px 4px, 12px 0,
+    calc(100% - 12px) 0, calc(100% - 12px) 4px, calc(100% - 8px) 4px,
+    calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 12px, 100% 12px,
+    100% calc(100% - 12px), calc(100% - 4px) calc(100% - 12px),
+    calc(100% - 4px) calc(100% - 8px), calc(100% - 8px) calc(100% - 8px),
+    calc(100% - 8px) calc(100% - 4px), calc(100% - 12px) calc(100% - 4px),
+    calc(100% - 12px) 100%, 12px 100%, 12px calc(100% - 4px),
+    8px calc(100% - 4px), 8px calc(100% - 8px), 4px calc(100% - 8px),
+    4px calc(100% - 12px), 0 calc(100% - 12px)
+  );
+}
+
+/* Pixel strip: a row of alternating 6px lime / pink squares
+   with 6px gaps — many small pixels in a line, not a solid bar. */
+.v2-pixel-strip {
+  background-image: repeating-linear-gradient(
+    to right,
+    #a3e635 0 6px, transparent 6px 12px,
+    #f7078e 12px 18px, transparent 18px 24px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-fade-up,
+  .v2-float,
+  .v2-glow-pulse,
+  .v2-gradient-text,
+  .v2-bounce-soft,
+  .v2-intro-flip,
+  .v2-nav-drop,
+  .v2-nav-pop {
     animation: none;
   }
+  .group:hover .v2-shine-beam,
+  .v2-shine-wrap:hover .v2-shine-beam {
+    animation: none;
+  }
+  .v2-wobble {
+    animation: none;
+  }
+}
+
+/* Creator tiles — uncommon hover, NOT zoom/scale:
+   HUD target-lock (corner brackets) + a scanline sweeping top to
+   bottom once per hover + info revealed by a left-to-right wipe
+   + a short glitch flicker on the name. */
+.v2-tile-scan {
+  animation: v2-tile-scan 0.9s ease-out forwards;
+}
+@keyframes v2-tile-scan {
+  0% { top: 0; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: calc(100% - 2px); opacity: 0; }
+}
+.v2-wipe {
+  transition: clip-path 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.v2-glitch {
+  animation: v2-glitch 0.45s steps(2, end);
+}
+@keyframes v2-glitch {
+  0% { transform: translateX(0); text-shadow: none; }
+  25% { transform: translateX(-2px); text-shadow: 2px 0 rgba(247, 7, 142, 0.8), -2px 0 rgba(56, 189, 248, 0.8); }
+  50% { transform: translateX(2px); text-shadow: -2px 0 rgba(247, 7, 142, 0.8), 2px 0 rgba(56, 189, 248, 0.8); }
+  75% { transform: translateX(-1px); text-shadow: none; }
+  100% { transform: translateX(0); text-shadow: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-tile-scan, .v2-glitch { animation: none; }
+  .v2-wipe { transition: none; }
+}
+
+/* Soft blue title: the softness lives IN the letters, not in a
+   background plaque (the cream plaque is removed). Pixel letters
+   in blue, light on top fading to deeper blue at the bottom, like
+   inflated glossy letters, with one soft drop shadow following the
+   letter shapes. Similar in feel to a glossy blue balloon render,
+   built in plain CSS — not a copy of any image. */
+.v2-soft-blue-title {
+  background: linear-gradient(to bottom, #8ec2ff 0%, #3b82f6 55%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 16px rgba(37, 99, 235, 0.35));
+}
+
+/* Cream clay plaque — used ONLY on the Creators and Recent edits
+   titles, as the user specified. Hero and Hire titles do NOT use
+   this; they use .v2-soft-blue-title instead. */
+.v2-clay-title {
+  background: #fdf3dc;
+  color: #2e2a3f;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 16px 28px rgba(0, 0, 0, 0.35),
+    inset 3px 3px 8px rgba(255, 255, 255, 0.9),
+    inset -4px -4px 10px rgba(190, 170, 130, 0.45);
+}
+
+/* transitions-dev — text morph (33-text-morph.md, snippet verbatim).
+   Used on the hire email Copy button: "Copy address" -> "Copied!"
+   keeps the shared "Cop" letters in place, only the changing part
+   cross-blurs while its width eases. */
+:root {
+  --text-morph-dur: 180ms;
+  --text-morph-resize-dur: 240ms;
+  --text-morph-blur: 2px;
+  --text-morph-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.t-morph {
+  white-space: nowrap;
+}
+.t-morph-swap {
+  display: inline-grid;
+  vertical-align: bottom;
+  justify-items: start;
+  transition: width var(--text-morph-resize-dur) var(--text-morph-ease);
+}
+.t-morph-swap > span {
+  grid-area: 1 / 1;
+  white-space: pre;
+  transition:
+    opacity var(--text-morph-dur) var(--text-morph-ease),
+    filter  var(--text-morph-dur) var(--text-morph-ease);
+}
+.t-morph-new {
+  opacity: 0;
+  filter: blur(var(--text-morph-blur));
+}
+.t-morph-swap.is-morphing .t-morph-old {
+  opacity: 0;
+  filter: blur(var(--text-morph-blur));
+}
+.t-morph-swap.is-morphing .t-morph-new {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* transitions-dev — video reveal, adapted from the skeleton reveal
+   content-reveal phase (14-skeleton-reveal.md): when a showcase
+   video swaps from thumbnail to iframe, the iframe fades in with a
+   soft cross-blur instead of appearing instantly. The thumbnail
+   itself is the placeholder, so there is no skeleton pulse phase. */
+:root {
+  --reveal-dur: 400ms;
+  --reveal-blur: 2px;
+  --reveal-ease: ease-in-out;
+}
+@keyframes v2-video-reveal {
+  from {
+    opacity: 0;
+    filter: blur(var(--reveal-blur));
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.v2-video-reveal {
+  animation: v2-video-reveal var(--reveal-dur) var(--reveal-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-morph-swap,
+  .t-morph-swap > span { transition: none !important; }
+  .v2-video-reveal { animation: none; }
 }

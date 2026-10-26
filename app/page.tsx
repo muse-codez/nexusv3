@@ -1,304 +1,586 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { ArrowUpRight, Envelope, Instagram, Play } from "reicon-react";
+import TextLoop from "@/components/TextLoop";
+import TargetCursor from "@/components/TargetCursor";
+import FaultyTerminal from "@/components/FaultyTerminal";
+import IntroLoader from "@/components/IntroLoader";
 
-const SHOWREEL =
-  "https://pub-d762446b1f924e5cabe93dad536beb79.r2.dev/Show%20reel%20(1).mp4";
+// NexusFX v2 — original homepage, inspired in general structure only by
+// notenemyok.com (pill nav, full-height hero, clients panel, video grid,
+// closing hire panel, and the card ideas: square client tiles with a
+// featured tile + name pill, landscape video cards with a bottom-right
+// play button). No text, images, videos, or code copied from that site;
+// all copy below is written for NexusFX, and the animation / hover
+// code here is original.
+//
+// Creators are now real (from v1, see CLIENTS). Video titles below
+// are still fictional placeholders, NOT real NexusFX videos.
+// Replace them with real ones before publishing.
+// Real NexusFX creators, copied from v1 (components/about.tsx):
+// logos are the channels' official YouTube avatars, copied from
+// v1 public/creators/ into v2 public/creators/. No longer fictional.
+// Subscriber counts + "who" lines read from each channel's official
+// YouTube page on 2026-10-25. Counts drift as channels grow, so
+// refresh them from the channel pages if they start looking stale.
+const CLIENTS = [
+  { name: "GamerFleet", logo: "/creators/gamerfleet.jpg", url: "https://www.youtube.com/@GamerFleet", subs: "6.05M subscribers", desc: "Indian gaming creator — Minecraft, Lilyville series" },
+  { name: "I. M. Bixu", logo: "/creators/imbixu.jpg", url: "https://www.youtube.com/@imbixu", subs: "4.46M subscribers", desc: "Gaming creator — horror & gameplay, “To Make You Smile!”" },
+  { name: "BeckBros", logo: "/creators/beckbros.jpg", url: "https://www.youtube.com/@beckbros", subs: "698K subscribers", desc: "IRL channel — funny videos & challenges with friends" },
+  { name: "BeckBroBlox", logo: "/creators/beckbroblox.jpg", url: "https://www.youtube.com/@BeckBroBlox", subs: "158K subscribers", desc: "Roblox gameplay" },
+  { name: "SarahGrace", logo: "/creators/sarahgrace.jpg", url: "https://www.youtube.com/@TheSarahGrace", subs: "3.76M subscribers", desc: "Tech, unboxing & fun — iPhone / Apple" },
+  { name: "Ayush Bhandari", logo: "/creators/ayushbhandari.jpg", url: "https://www.youtube.com/@AyushBhandari", subs: "6.74M subscribers", desc: "Experience & challenge videos" },
+] as const;
 
-// Creators copied from NexusFX v1/v2. Subscriber counts were read from the
-// official YouTube channel pages on 2026-10-25 and will drift over time.
-const CREATORS = [
-  {
-    name: "GamerFleet",
-    logo: "/creators/gamerfleet.jpg",
-    url: "https://www.youtube.com/@GamerFleet",
-    subs: "6.05M subscribers",
-    desc: "Indian gaming creator — Minecraft, Lilyville series",
-  },
-  {
-    name: "I. M. Bixu",
-    logo: "/creators/imbixu.jpg",
-    url: "https://www.youtube.com/@imbixu",
-    subs: "4.46M subscribers",
-    desc: "Gaming creator — horror & gameplay",
-  },
-  {
-    name: "BeckBros",
-    logo: "/creators/beckbros.jpg",
-    url: "https://www.youtube.com/@beckbros",
-    subs: "698K subscribers",
-    desc: "IRL channel — funny videos & challenges with friends",
-  },
-  {
-    name: "BeckBroBlox",
-    logo: "/creators/beckbroblox.jpg",
-    url: "https://www.youtube.com/@BeckBroBlox",
-    subs: "158K subscribers",
-    desc: "Roblox gameplay",
-  },
-  {
-    name: "SarahGrace",
-    logo: "/creators/sarahgrace.jpg",
-    url: "https://www.youtube.com/@TheSarahGrace",
-    subs: "3.76M subscribers",
-    desc: "Tech, unboxing & fun — iPhone / Apple",
-  },
-  {
-    name: "Ayush Bhandari",
-    logo: "/creators/ayushbhandari.jpg",
-    url: "https://www.youtube.com/@AyushBhandari",
-    subs: "6.74M subscribers",
-    desc: "Experience & challenge videos",
-  },
-];
-
-// Recent edits carried over from v1/v2's showcase picks. These are the
-// placeholder picks from v2 — replace with confirmed portfolio pieces.
+// Showcase videos copied from v1 (components/showcase.tsx):
+// placeholder picks for now, one per creator, verified in v1 via
+// YouTube oEmbed. Replace these IDs later with real portfolio pieces.
 const VIDEOS = [
-  { id: "voAnIhI5PF8", title: "I MET THE PRIME MINISTER OF INDIA", creator: "GamerFleet" },
-  { id: "H5fyiYtyLjw", title: "Finding EVERY ANOMALY in SCHOOL!", creator: "I. M. Bixu" },
-  { id: "zbM-A_VKd58", title: "BeckBro's Cereal Tier List", creator: "BeckBros" },
-  { id: "2JHbnL5rj6c", title: "BeckBros Play Heave Ho 2", creator: "BeckBroBlox" },
-  { id: "Jaj75z2hGwo", title: "I 3D Printed a FOLDABLE iPhone...", creator: "SarahGrace" },
-  { id: "HsMemCsMGyc", title: "I Tried Every Celebrity Experience!", creator: "Ayush Bhandari" },
-];
+  { id: "voAnIhI5PF8", title: "I MET THE PRIME MINISTER OF INDIA", creator: "GamerFleet", creatorUrl: "https://www.youtube.com/@GamerFleet", creatorLogo: "/creators/gamerfleet.jpg" },
+  { id: "H5fyiYtyLjw", title: "Finding EVERY ANOMALY in SCHOOL!", creator: "I. M. Bixu", creatorUrl: "https://www.youtube.com/@imbixu", creatorLogo: "/creators/imbixu.jpg" },
+  { id: "zbM-A_VKd58", title: "BeckBro's Cereal Tier List", creator: "BeckBros", creatorUrl: "https://www.youtube.com/@beckbros", creatorLogo: "/creators/beckbros.jpg" },
+  { id: "2JHbnL5rj6c", title: "BeckBros Play Heave Ho 2", creator: "BeckBroBlox", creatorUrl: "https://www.youtube.com/@BeckBroBlox", creatorLogo: "/creators/beckbroblox.jpg" },
+  { id: "Jaj75z2hGwo", title: "I 3D Printed a FOLDABLE iPhone...", creator: "SarahGrace", creatorUrl: "https://www.youtube.com/@TheSarahGrace", creatorLogo: "/creators/sarahgrace.jpg" },
+  { id: "HsMemCsMGyc", title: "I Tried Every Celebrity Experience!", creator: "Ayush Bhandari", creatorUrl: "https://www.youtube.com/@AyushBhandari", creatorLogo: "/creators/ayushbhandari.jpg" },
+] as const;
 
-const EMAIL = "nexusfx.media@gmail.com";
-const INSTAGRAM_URL = "https://www.instagram.com/nexu.fx4";
+
+// transitions-dev text morph (33-text-morph.md, JS orchestration
+// adapted to React + TypeScript). The label span in JSX keeps a
+// constant "Copy address" child, so React never overwrites the
+// morph DOM; the effect below drives the text instead.
+type MorphEl = HTMLElement & { _morphTimer?: ReturnType<typeof setTimeout> };
+function morphText(el: MorphEl, next: string) {
+  const prev = el.dataset.text ?? el.textContent ?? "";
+  if (prev === next) return;
+  el.dataset.text = next;
+  if (el._morphTimer) clearTimeout(el._morphTimer);
+  const root = document.documentElement;
+  const ms = (name: string) =>
+    parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
+
+  let a = 0;
+  while (a < prev.length && a < next.length && prev[a] === next[a]) a++;
+  let b = 0;
+  while (
+    b < prev.length - a &&
+    b < next.length - a &&
+    prev[prev.length - 1 - b] === next[next.length - 1 - b]
+  )
+    b++;
+
+  const swap = document.createElement("span");
+  swap.className = "t-morph-swap";
+  const out = document.createElement("span");
+  out.className = "t-morph-old";
+  out.setAttribute("aria-hidden", "true");
+  out.textContent = prev.slice(a, prev.length - b);
+  const inn = document.createElement("span");
+  inn.className = "t-morph-new";
+  inn.textContent = next.slice(a, next.length - b);
+  swap.append(out, inn);
+
+  el.textContent = "";
+  el.append(next.slice(0, a), swap, next.slice(next.length - b));
+
+  swap.style.width = out.getBoundingClientRect().width + "px";
+  void swap.offsetWidth; // force reflow so the width transitions
+  swap.classList.add("is-morphing");
+  swap.style.width = inn.getBoundingClientRect().width + "px";
+
+  el._morphTimer = setTimeout(() => {
+    el.textContent = next;
+  }, Math.max(ms("--text-morph-dur"), ms("--text-morph-resize-dur")) + 40);
+}
 
 export default function Home() {
-  const [playing, setPlaying] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  // Featured client tile: NO tile is featured at rest, so all six
+  // tiles sit in exactly the same state. Hover (or keyboard focus)
+  // features a tile, and leaving it clears the feature again.
+  const [featuredClient, setFeaturedClient] = useState<number | null>(null);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [emailCopied, setEmailCopied] = useState(false);
+  const copyLabelRef = useRef<HTMLSpanElement>(null);
 
-  const copyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(EMAIL);
-    } catch {
-      /* clipboard unavailable — mailto link still works */
+  // Drive the Copy button label through the text morph: on mount
+  // this is a no-op (label already "Copy address"), on copy it
+  // morphs to "Copied!", and on the 2s revert it morphs back.
+  useEffect(() => {
+    if (copyLabelRef.current) {
+      morphText(copyLabelRef.current, emailCopied ? "Copied!" : "Copy address");
     }
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  }, [emailCopied]);
+
+  // Navbar, two states like the reference screenshots:
+  // - Without scroll: flat, no pill container, just brand + links
+  //   on the page background, home as a blue pill, hire as a
+  //   pink/maroon pill, all links always visible.
+  // - After scroll: the same bar becomes a dark pixel-corner bar
+  //   container (blur + shadow + ring).
+  // This replaces the earlier "hidden on hero" rule.
+  // Scroll-spy: blue pill = the section actually on screen.
+  // Previously home was hardcoded blue, so scrolling never
+  // changed the navbar. Now the active section is recomputed
+  // on every scroll: the last section whose top has passed
+  // 150px from the viewport top (navbar height + margin).
+  // Order matters because #videos sits inside #clients.
+  const [active, setActive] = useState("top");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      let current = "top";
+      for (const id of ["top", "clients", "videos", "hire"]) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 150) current = id;
+      }
+      setActive(current);
+      setScrolled(window.scrollY > 80);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Slide overlay, back as the user wanted, WITH the leak fix:
+  // - Hero is sticky again, clients card (z-20) slides up OVER it.
+  // - NO zoom (no scale at all). The only extra is a hero
+  //   fade-out: as the card covers the hero over one hero-height
+  //   of scroll, hero opacity goes 1 -> 0. So once the card has
+  //   covered it, the hero (video included) is invisible — it
+  //   cannot leak into the hire section, the card sides, or the
+  //   gap after the card, even though the hero keeps moving with
+  //   the page afterwards. The fade uses raw scrollY (no spring
+  //   lag), so it never lags behind and shows a video strip.
+  // - The card itself still slides 80px -> 0 on the soft spring.
+  // - A soft spring (low stiffness) on scrollY makes it all
+  //   lazy/smooth instead of snapping to the scroll position.
+  // - Reduced-motion users get no slide.
+  const heroRef = useRef<HTMLElement>(null);
+  const [heroHeight, setHeroHeight] = useState(800);
+  useEffect(() => {
+    const measure = () => {
+      if (heroRef.current) setHeroHeight(heroRef.current.offsetHeight);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+  const { scrollY } = useScroll();
+  const smoothScrollY = useSpring(scrollY, { stiffness: 55, damping: 20, mass: 1 });
+  const cardY = useTransform(smoothScrollY, [0, heroHeight], [80, 0]);
+  const heroOpacity = useTransform(scrollY, [0, heroHeight], [1, 0]);
+  const reduceMotion = useReducedMotion();
 
   return (
-    <main className="min-h-screen bg-[#0c1117] text-[#f2f4f6]">
-      {/* Nav */}
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#233042] bg-[#0c1117]/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <a href="#top" className="font-display text-xl font-black tracking-tight">
-            NEXUS<span className="text-[#ffb703]">FX</span>
+    <div className="relative min-h-screen bg-gradient-to-b from-[#0a0a0a] via-[#0d0d0d] to-black font-sans text-white">
+      <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn cursorColor="#ffffff" cursorColorOnTarget="#a3e635" />
+      {/* Intro loader: black screen, flipping zoom-in logo, then
+          fades away to reveal this page rendered underneath. */}
+      <IntroLoader />
+      {/* Main background: React Bits FaultyTerminal, fixed behind
+          all content. Props are the usage example as given. */}
+      <div aria-hidden="true" className="fixed inset-0 z-0">
+        <FaultyTerminal
+          tint="#A7EF9E"
+          glyphs="blocks"
+          scale={1.5}
+          digitSize={1.2}
+          timeScale={0.5}
+          brightness={0.75}
+          glow={0.5}
+          persistence={0.5}
+          mouseStrength={0.5}
+          mouseGlow={0.6}
+          curvature={0.1}
+          vignette={0.25}
+          clickEffect="glitch"
+        />
+      </div>
+      {/* Navbar: at the top it stays flat and transparent, so
+          the hero video shows through. Past 80px of scroll it
+          pops in (v2-nav-pop) as a dark glass pixel bar: zinc-900
+          at 80% with blur, border and shadow, same max-w-3xl
+          width so it does not jump. This supersedes the
+          earlier "never a background" state — the user now
+          asked for a background on scroll. */}
+      <header className="v2-nav-drop fixed inset-x-0 top-0 z-50 flex justify-center px-4 py-4">
+        <nav
+          className={`flex w-full max-w-3xl items-center justify-between transition-all duration-500 ${
+            scrolled
+              ? "v2-nav-pop v2-pixel-corners bg-zinc-900/80 px-4 py-2 shadow-xl shadow-black/40 border border-white/10 backdrop-blur-md"
+              : "bg-transparent px-2 py-1"
+          }`}
+        >
+          <a href="#top" data-cursor-label="Top" className="cursor-target flex items-center gap-2 transition-transform duration-300 hover:scale-105">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="NexusFX logo" className="h-8 w-8 object-cover" />
+            <span className="font-pixelify text-xl font-bold text-lime-400">NexusFX</span>
           </a>
-          <nav className="flex items-center gap-5 text-sm font-medium">
-            <a href="#creators" className="hidden text-[#9aa7b4] hover:text-white sm:inline">
-              Creators
+          <div className="flex items-center gap-1 font-pixelify text-xs uppercase sm:gap-2 sm:text-sm">
+            <a
+              href="#top"
+              data-cursor-label="Home"
+              className={`cursor-target px-4 py-1 transition-all duration-300 ${
+                active === "top"
+                  ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
+                  : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              home
             </a>
-            <a href="#videos" className="hidden text-[#9aa7b4] hover:text-white sm:inline">
-              Recent edits
+            <a
+              href="#clients"
+              data-cursor-label="Clients"
+              className={`cursor-target px-4 py-1 transition-all duration-300 ${
+                active === "clients"
+                  ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
+                  : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              clients
+            </a>
+            <a
+              href="#videos"
+              data-cursor-label="Videos"
+              className={`cursor-target px-4 py-1 transition-all duration-300 ${
+                active === "videos"
+                  ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
+                  : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              videos
             </a>
             <a
               href="#hire"
-              className="rounded-full bg-[#ffb703] px-4 py-2 font-semibold text-[#0c1117] hover:bg-[#ffc733] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ffb703]"
+              data-cursor-label="Hire"
+              className={`cursor-target v2-shine-wrap relative overflow-hidden px-4 py-1 font-bold text-white transition-all duration-300 hover:scale-105 ${
+                active === "hire"
+                  ? "bg-[#3884ff] shadow-[0_0_18px_rgba(56,132,255,0.6)]"
+                  : "bg-[#5b1a3a] ring-1 ring-pink-500/60 hover:bg-pink-600"
+              }`}
             >
-              Hire me
+              hire <span aria-hidden="true" className="v2-shine-beam" />
             </a>
-          </nav>
-        </div>
+          </div>
+        </nav>
       </header>
 
-      {/* Hero — showreel first, title over the video */}
-      <section id="top" className="relative flex min-h-screen items-end overflow-hidden">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          src={SHOWREEL}
-          muted
-          autoPlay
-          loop
-          playsInline
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1117] via-[#0c1117]/40 to-transparent" />
-        <div className="v3-fade-up relative z-10 mx-auto w-full max-w-6xl px-5 pb-16 pt-32">
-          <p className="font-mono text-xs tracking-widest text-[#ffb703]">
-            VIDEO EDITOR FOR YOUTUBERS &amp; GAMING CREATORS
-          </p>
-          <h1 className="mt-4 font-display text-6xl font-black leading-[0.95] tracking-tight sm:text-8xl">
-            NEXUSFX
-          </h1>
-          <p className="mt-4 max-w-xl text-lg text-[#d7dee6]">
-            Edits that hold attention. High-retention YouTube and gaming videos,
-            cut so people actually finish watching.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="#hire"
-              className="rounded-full bg-[#ffb703] px-6 py-3 font-semibold text-[#0c1117] hover:bg-[#ffc733]"
-            >
-              Hire NexusFX
-            </a>
-            <a
-              href="#creators"
-              className="rounded-full border border-[#9aa7b4] px-6 py-3 font-semibold hover:border-white"
-            >
-              See who he edits for
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Edit-timeline strip — the one subject-specific motif */}
-      <div className="border-y border-[#233042] bg-[#131a24]" aria-hidden="true">
-        <div className="mx-auto flex max-w-6xl items-stretch gap-1 px-5 py-3 font-mono text-[11px] text-[#9aa7b4]">
-          <span className="w-2 bg-[#ffb703]" />
-          <span className="flex-1 truncate px-2 py-1">00:00 — SHOWREEL</span>
-          <span className="hidden flex-1 truncate px-2 py-1 sm:block">00:12 — CREATORS</span>
-          <span className="hidden flex-1 truncate px-2 py-1 md:block">00:24 — RECENT EDITS</span>
-          <span className="w-px bg-[#ffb703]" />
-          <span className="px-2 py-1 text-white">▶</span>
-        </div>
-      </div>
-
-      {/* Creators */}
-      <section id="creators" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-20">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h2 className="font-display text-4xl font-black tracking-tight sm:text-5xl">
-              Worked with
-            </h2>
-            <p className="mt-2 max-w-lg text-[#9aa7b4]">
-              Creators NexusFX has edited for, with their channels linked.
+      {/* Scroll reveal wrapper: hero + clients share one parent, so the sticky hero can sit UNDER the sliding card, then scroll away with the wrapper once the card has covered it. */}
+      <div className="relative">
+      {/* Hero — full viewport, centred */}
+      <motion.section
+        ref={heroRef}
+        id="top"
+        style={{ opacity: reduceMotion ? 1 : heroOpacity }}
+        className="sticky top-0 z-10 flex min-h-screen flex-col items-center justify-center text-center"
+      >
+        {/* Hero card, edge to edge, covering the full hero area
+            like the reference: full viewport width AND full
+            viewport height, so no background strip shows above
+            or below it. The showreel video and the title both
+            sit inside this card — title over the video, as the
+            user picked. */}
+        <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden shadow-2xl ring-1 ring-zinc-400/30">
+          {/* Hero video: NexusFX showreel, user-supplied R2 link.
+              Hotlinked (not copied into the repo). */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-100"
+            src="https://pub-d762446b1f924e5cabe93dad536beb79.r2.dev/Show%20reel%20(1).mp4"
+          />
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
+          <div className="group v2-fade-up relative z-10 -rotate-2 border-2 border-lime-400/60 px-6 py-8 sm:px-10">
+            <span className="absolute -left-2 -top-2 h-4 w-4 bg-lime-400" />
+            <span className="absolute -right-2 -top-2 h-4 w-4 bg-lime-400" />
+            <span className="absolute -bottom-2 -left-2 h-4 w-4 bg-lime-400" />
+            <span className="absolute -bottom-2 -right-2 h-4 w-4 bg-lime-400" />
+            <span className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 bg-lime-400" />
+            <span className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 bg-lime-400" />
+            <span className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 bg-lime-400" />
+            <span className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 bg-lime-400" />
+            <span className="absolute -bottom-5 right-4 bg-lime-400 px-4 py-1 font-mono text-[10px] font-bold text-black">
+              NEXUSFX
+            </span>
+            <span className="v2-wobble relative inline-block px-2 py-4">
+              <h1 className="v2-soft-blue-title font-pixelify text-[clamp(4.5rem,18vw,12.5rem)] font-extrabold leading-none tracking-tight">
+                NexusFX
+              </h1>
+            </span>
+            <p className="mt-6 font-minecraft text-sm leading-relaxed text-lime-300 sm:text-base">
+              edits that hold attention
             </p>
+            <div aria-hidden="true" className="v2-pixel-strip mx-auto mt-5 h-[6px] w-40" />
           </div>
-          <p className="font-mono text-xs text-[#9aa7b4]">06 CREATORS</p>
+          <p className="v2-bounce-soft absolute bottom-6 z-10 bg-white/10 px-4 py-1 font-mono text-xs text-white/70 backdrop-blur">
+            scroll ↓
+          </p>
         </div>
+      </motion.section>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {CREATORS.map((c) => (
-            <a
-              key={c.name}
-              href={c.url}
-              target="_blank"
-              rel="noreferrer"
-              className="group overflow-hidden rounded-2xl border border-[#233042] bg-[#131a24] transition-colors hover:border-[#ffb703]"
-            >
-              <img src={c.logo} alt={c.name} className="aspect-square w-full object-cover" />
-              <div className="p-5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-display text-xl font-bold">{c.name}</h3>
-                  <span className="font-mono text-[11px] text-[#9aa7b4]">{c.subs}</span>
-                </div>
-                <p className="mt-1 text-sm text-[#9aa7b4]">{c.desc}</p>
-                <p className="mt-3 text-sm font-semibold text-[#ffb703] group-hover:underline">
-                  Visit channel →
-                </p>
+      {/* Clients — contained dark panel, square edge-to-edge tiles */}
+      <section id="clients" className="relative z-20 w-full px-2 pb-24 sm:px-4">
+        <motion.div style={{ y: reduceMotion ? 0 : cardY }} className="v2-pixel-corners relative w-full overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-800 to-zinc-900 p-8 shadow-2xl border border-zinc-400/30 sm:p-12">
+          <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+          <span aria-hidden="true" className="v2-pixel-strip absolute inset-x-0 top-0 h-[6px]" />
+          <span aria-hidden="true" className="absolute left-4 top-3 text-sm text-white/30">✦</span>
+          <span aria-hidden="true" className="absolute right-4 top-3 text-sm text-white/30">✦</span>
+          <span aria-hidden="true" className="absolute bottom-3 left-4 text-sm text-white/30">✦</span>
+          <span aria-hidden="true" className="absolute bottom-3 right-4 text-sm text-white/30">✦</span>
+          <h2 className="relative text-center font-pixelify text-5xl font-bold leading-tight tracking-wide sm:text-7xl">
+            <span className="v2-clay-title inline-block px-10 py-3">Creators I&apos;ve worked with</span>
+          </h2>
+          <div
+            className="relative mx-auto mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:w-[46%] lg:grid-cols-3"
+            onMouseLeave={() => setFeaturedClient(null)}
+          >
+            {CLIENTS.map((client, index) => {
+              const featured = featuredClient === index;
+              return (
+                <a
+                  key={client.name}
+                  href={client.url}
+                  data-cursor-label={client.name}
+                  target="_blank"
+                  rel="noreferrer"
+                  onMouseEnter={() => setFeaturedClient(index)}
+                  onFocus={() => setFeaturedClient(index)}
+                  onBlur={() => setFeaturedClient(null)}
+                  className={`cursor-target relative aspect-square overflow-hidden bg-zinc-900 shadow-lg ring-1 ring-zinc-300/40 transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400 ${
+                    featured
+                      ? "z-10 ring-2 ring-lime-400/80 shadow-[0_0_28px_rgba(163,230,53,0.35)]"
+                      : ""
+                  }`}
+                >
+                  <img
+                    src={client.logo}
+                    alt={client.name}
+                    className="h-full w-full object-cover" 
+                  />
+                  {/* Metal shine: bright top-left sweep over the tile */}
+                  <span className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/40 via-white/5 to-black/25" />
+                  {/* HUD target-lock: four corner brackets, only on hover */}
+                  <span aria-hidden="true" className={`pointer-events-none absolute inset-2 transition-opacity duration-200 ${featured ? "opacity-100" : "opacity-0"}`}>
+                    <span className="absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-lime-400" />
+                    <span className="absolute right-0 top-0 h-5 w-5 border-r-2 border-t-2 border-lime-400" />
+                    <span className="absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2 border-lime-400" />
+                    <span className="absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-lime-400" />
+                  </span>
+                  {/* Scanline: sweeps top to bottom once per hover entry */}
+                  {featured && (
+                    <span aria-hidden="true" className="v2-tile-scan pointer-events-none absolute inset-x-0 h-[2px] bg-lime-400 shadow-[0_0_12px_rgba(163,230,53,0.9)]" />
+                  )}
+                  {/* Rest name: always readable, so the grid reads as
+                      creators at a glance instead of just logos —
+                      a Pixelify name with a lime dot over a soft
+                      gradient. It fades out as the hover info
+                      wipes in, so the two never stack. */}
+                  <span
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-2.5 pt-6 text-left transition-opacity duration-300 ${
+                      featured ? "opacity-0" : "opacity-100"
+                    }`}
+                  >
+                    <span className="flex items-center gap-1.5 font-pixelify text-sm text-white">
+                      <span className="h-1.5 w-1.5 shrink-0 bg-lime-400" />
+                      {client.name}
+                    </span>
+                  </span>
+                  {/* Hover info: revealed by a left-to-right wipe, not a
+                      slide/fade — name gets a short glitch flicker.
+                      Name now matches the rest strip (Pixelify) and
+                      subs are mono, for a HUD-style info panel. */}
+                  <span
+                    className="v2-wipe absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/95 via-black/70 to-transparent px-3 pb-3 pt-8 text-left"
+                    style={{ clipPath: featured ? "inset(0 0 0 0)" : "inset(0 100% 0 0)" }}
+                  >
+                    <span className={`block font-pixelify text-sm text-white ${featured ? "v2-glitch" : ""}`}>{client.name}</span>
+                    <span className="mt-0.5 block text-xs leading-snug text-white/80">{client.desc}</span>
+                    <span className="mt-1 block font-mono text-[11px] font-semibold text-lime-300">{client.subs}</span>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+          {/* Recent edits — v1 showcase, inside the same metal card,
+              which now expands to the end of the showcase. */}
+          <div id="videos" className="relative mt-16 scroll-mt-24 text-center">
+            <h2 className="mt-6 font-pixelify text-5xl font-bold leading-tight tracking-wide sm:text-7xl">
+              <span className="v2-clay-title inline-block px-10 py-3">Recent edits</span>
+            </h2>
+          </div>
+        <div className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {VIDEOS.map((video) => (
+            <article key={video.id}>
+              <div className="relative aspect-video overflow-hidden bg-black shadow-lg ring-1 ring-zinc-300/40">
+                {playingId === video.id ? (
+                  <iframe
+                    src={`https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`}
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="v2-video-reveal absolute inset-0 h-full w-full border-0"
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setPlayingId(video.id)}
+                    aria-label={`Play ${video.title}`}
+                    data-cursor-label="Play"
+                    className="cursor-target group absolute inset-0 h-full w-full cursor-pointer"
+                  >
+                    <img
+                      src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`}
+                      alt={video.title}
+                      loading="lazy"
+                      draggable={false}
+                      className="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-80"
+                    />
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="flex h-14 w-14 items-center justify-center bg-black text-white ring-1 ring-white/60 transition duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.18] group-hover:bg-[#f7078e] group-hover:shadow-[0_0_20px_rgba(247,7,142,0.85)]">
+                        <Play size={24} weight="Filled" />
+                      </span>
+                    </span>
+                  </button>
+                )}
               </div>
-            </a>
+              <h3 className="mt-3 text-left font-mono text-sm font-medium leading-snug text-white">
+                {video.title}
+              </h3>
+              <a
+                href={video.creatorUrl}
+                target="_blank"
+                rel="noreferrer"
+                data-cursor-label={video.creator}
+                className="cursor-target mt-2 flex items-center gap-2 font-mono text-xs text-white/70 transition hover:text-white"
+              >
+                <img src={video.creatorLogo} alt={video.creator} className="h-5 w-5 object-cover" />
+                {video.creator}
+              </a>
+            </article>
           ))}
         </div>
-      </section>
-
-      {/* Recent edits */}
-      <section id="videos" className="border-t border-[#233042] bg-[#0a0e14]">
-        <div className="mx-auto max-w-6xl scroll-mt-24 px-5 py-20">
-          <h2 className="font-display text-4xl font-black tracking-tight sm:text-5xl">
-            Recent edits
-          </h2>
-          <p className="mt-2 max-w-lg text-[#9aa7b4]">
-            Tap a thumbnail to play it here. One video plays at a time.
-          </p>
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {VIDEOS.map((v) => (
-              <article
-                key={v.id}
-                className="overflow-hidden rounded-2xl border border-[#233042] bg-[#131a24]"
-              >
-                <div className="relative aspect-video">
-                  {playing === v.id ? (
-                    <iframe
-                      className="absolute inset-0 h-full w-full"
-                      src={`https://www.youtube.com/embed/${v.id}?autoplay=1`}
-                      title={v.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setPlaying(v.id)}
-                      className="group relative block h-full w-full text-left focus-visible:outline-2 focus-visible:outline-[#ffb703]"
-                      aria-label={`Play ${v.title}`}
-                    >
-                      <img
-                        src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`}
-                        alt=""
-                        className="absolute inset-0 h-full w-full object-cover"
-                      />
-                      <span className="absolute inset-0 grid place-items-center bg-black/30">
-                        <span className="grid h-14 w-14 place-items-center rounded-full bg-[#ffb703] text-xl text-[#0c1117]">
-                          ▶
-                        </span>
-                      </span>
-                    </button>
-                  )}
-                </div>
-                <div className="p-5">
-                  <h3 className="font-semibold leading-snug">{v.title}</h3>
-                  <p className="mt-1 text-sm text-[#9aa7b4]">{v.creator}</p>
-                </div>
-              </article>
-            ))}
+          <div className="relative mt-10 flex items-center justify-between border-t border-white/10 pt-4 font-mono text-[10px] text-white/50">
+            <span>CLIENTS · 06</span>
+            <span>+</span>
+            <span>NEXUSFX · 2026</span>
           </div>
-        </div>
+        </motion.div>
       </section>
+      </div>
 
-      {/* Hire */}
-      <section id="hire" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-20">
-        <div className="rounded-2xl border border-[#ffb703]/40 bg-[#131a24] p-8 sm:p-10">
-          <h2 className="font-display text-4xl font-black tracking-tight sm:text-5xl">
-            Hire NexusFX
-          </h2>
-          <p className="mt-3 max-w-lg text-[#9aa7b4]">
-            Got a video that needs to hold attention? Send the idea and he will
-            cut it into something people actually finish.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-xl bg-[#0c1117] p-6">
-              <p className="text-sm font-semibold">Email</p>
-              <p className="mt-2 break-all font-mono text-lg">{EMAIL}</p>
-              <div className="mt-4 flex flex-wrap gap-3">
+      {/* Hire — rebuilt, NOT the old card: a TextLoop wave ribbon
+          (with a crossing second band + scroll boost) plus a
+          pulsing availability badge, and contact as two large
+          tiles instead of the old pill row. */}
+      <section id="hire" className="relative z-10 pb-24">
+        {/* Edge-to-edge loop: full viewport width, no container. */}
+        <div className="w-full">
+          <TextLoop
+            text="HIRE ME"
+            shape="wave"
+            speed={90}
+            direction="forward"
+            separator="✦"
+            curviness={90}
+            tilt={0}
+            fontSize={46}
+            fontWeight={800}
+            letterSpacing={2}
+            uppercase
+            ribbon
+            ribbonColor="#a3e635"
+            color="#000000"
+            ribbonWidth={86}
+            edgeFade={0}
+            cross
+            crossAngle={16}
+            scrollBoost={0.6}
+            pauseOnHover
+            className="mt-4"
+            style={{ fontFamily: "var(--font-pixelify), monospace" }}
+          />
+        </div>
+        <div className="mx-auto max-w-5xl px-4">
+          {/* Hire panel, inspired by the researched portfolios
+              (Felix-style simple contact structure, Tanner-style
+              bold primary CTA, Matheus-style email + social
+              buttons), in original code: one framed matte-metal
+              panel holding the two contact tiles, so hire reads
+              as one section instead of floating tiles. No site's
+              layout or wording copied; no new copy added. */}
+          <div className="v2-pixel-corners relative mt-10 overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-800 to-zinc-900 p-6 shadow-2xl border border-zinc-400/30 sm:p-8">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
+              <span aria-hidden="true" className="v2-pixel-strip absolute inset-x-0 top-0 h-[6px]" />
+            <div className="relative grid gap-6 text-left sm:grid-cols-5">
+            <div className="group relative overflow-hidden bg-zinc-900 p-8 shadow-xl ring-1 ring-zinc-700 transition-shadow duration-500 motion-reduce:transition-none hover:shadow-[0_0_40px_rgba(163,230,53,0.35)] hover:ring-lime-400/60 sm:col-span-3">
+              {/* Primary tile: solid zinc at rest, lime fill on
+                  hover (no fire, no zoom) with a shine sweep, and
+                  text/buttons flip to dark for readability. */}
+              <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-lime-300 via-lime-400 to-lime-500 opacity-0 transition-opacity duration-500 motion-reduce:transition-none group-hover:opacity-100" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-md transition-transform duration-700 motion-reduce:transition-none group-hover:translate-x-[400%]" />
+              <p className="relative z-10 flex items-center gap-2 font-mono text-xs text-white/60 transition-colors duration-500 motion-reduce:transition-none group-hover:text-black/60">
+                <Envelope size={16} weight="Filled" /> Email
+              </p>
+              <p className="relative z-10 mt-3 break-all font-pixelify text-xl text-white transition-colors duration-500 motion-reduce:transition-none group-hover:text-black">nexusfx.media@gmail.com</p>
+              <div className="relative z-10 mt-6 flex flex-wrap gap-2">
                 <a
-                  href={`mailto:${EMAIL}`}
-                  className="rounded-full bg-[#ffb703] px-5 py-2.5 text-sm font-semibold text-[#0c1117] hover:bg-[#ffc733]"
+                  href="mailto:nexusfx.media@gmail.com"
+                  data-cursor-label="Email"
+                  className="cursor-target bg-lime-400 px-6 py-3 text-base font-bold text-black transition duration-150 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 group-hover:bg-black group-hover:text-lime-400"
                 >
                   Write an email
                 </a>
                 <button
                   type="button"
-                  onClick={copyEmail}
-                  className="rounded-full border border-[#9aa7b4] px-5 py-2.5 text-sm font-semibold hover:border-white"
+                  data-cursor-label="Copy"
+                  onClick={() => {
+                    navigator.clipboard?.writeText("nexusfx.media@gmail.com").catch(() => {});
+                    setEmailCopied(true);
+                    setTimeout(() => setEmailCopied(false), 2000);
+                  }}
+                  className="cursor-target bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 transition duration-150 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 group-hover:bg-black/10 group-hover:text-black group-hover:ring-black/20"
                 >
-                  {copied ? "Copied!" : "Copy address"}
+                  <span ref={copyLabelRef} className="t-morph">Copy address</span>
                 </button>
               </div>
             </div>
-            <div className="rounded-xl bg-[#0c1117] p-6">
-              <p className="text-sm font-semibold">Instagram</p>
-              <p className="mt-2 font-mono text-lg">@nexu.fx4</p>
-              <a
-                href={INSTAGRAM_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-4 inline-block rounded-full border border-[#9aa7b4] px-5 py-2.5 text-sm font-semibold hover:border-white"
-              >
-                Visit profile →
-              </a>
+            <a
+              href="https://www.instagram.com/nexu.fx4"
+              target="_blank"
+              rel="noreferrer"
+              data-cursor-label="Instagram"
+              className="cursor-target group relative overflow-hidden bg-zinc-900 p-8 shadow-xl ring-1 ring-zinc-700 transition-shadow duration-500 motion-reduce:transition-none hover:shadow-[0_0_40px_rgba(247,7,142,0.35)] hover:ring-pink-500/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 sm:col-span-2"
+            >
+              {/* Secondary tile: same solid + fill + shine language
+                  as email, but pink (not a lime copy), no fire, no
+                  zoom — the arrow slides diagonally instead. */}
+              <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-pink-400 via-[#f7078e] to-pink-600 opacity-0 transition-opacity duration-500 motion-reduce:transition-none group-hover:opacity-100" />
+              <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-md transition-transform duration-700 motion-reduce:transition-none group-hover:translate-x-[400%]" />
+              <p className="relative z-10 flex items-center gap-2 font-mono text-xs text-white/60 transition-colors duration-500 motion-reduce:transition-none group-hover:text-black/60">
+                <Instagram size={16} weight="Filled" /> Instagram
+              </p>
+              <p className="relative z-10 mt-3 font-pixelify text-xl text-white transition-colors duration-500 motion-reduce:transition-none group-hover:text-black">@nexu.fx4</p>
+              <span className="relative z-10 mt-6 inline-flex items-center gap-1 bg-white/10 px-5 py-2 text-sm font-semibold text-pink-400 ring-1 ring-white/20 transition duration-150 group-hover:bg-black/10 group-hover:text-black group-hover:ring-black/20">
+                Visit profile <span className="inline-block transition-transform duration-300 motion-reduce:transition-none group-hover:-translate-y-0.5 group-hover:translate-x-0.5"><ArrowUpRight size={16} weight="Filled" /></span>
+              </span>
+            </a>
             </div>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-[#233042] py-8 text-center text-sm text-[#9aa7b4]">
-        © 2026 NexusFX
+      {/* Site footer */}
+      <footer className="relative z-10 px-4 pb-16">
+        <p className="text-center font-mono text-xs text-white/40">
+          © 2026 NexusFX
+        </p>
       </footer>
-    </main>
+    </div>
   );
 }
