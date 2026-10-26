@@ -223,6 +223,41 @@ body {
   }
 }
 
+/* Hire sparkles: hidden at rest, twinkling only while the tile is
+   hovered (group-hover). Each sparkle rises slightly, spins and
+   fades out, then repeats with its own delay while hover lasts. */
+.v3-sparkle {
+  opacity: 0;
+  transform: scale(0) rotate(0deg);
+}
+.group:hover .v3-sparkle {
+  animation: v3-sparkle-twinkle 1.4s ease-in-out infinite;
+}
+@keyframes v3-sparkle-twinkle {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg) translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1) rotate(20deg) translateY(-2px);
+  }
+  70% {
+    opacity: 0.8;
+    transform: scale(0.8) rotate(45deg) translateY(-6px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(90deg) translateY(-10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .v3-sparkle {
+    animation: none;
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .v2-fade-up,
   .v2-float,

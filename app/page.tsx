@@ -473,6 +473,15 @@ export default function Home() {
                   text/buttons flip to dark for readability. */}
               <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-lime-300 via-lime-400 to-lime-500 opacity-0 transition-opacity duration-500 motion-reduce:transition-none group-hover:opacity-100" />
               <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-md transition-transform duration-700 motion-reduce:transition-none group-hover:translate-x-[400%]" />
+              {/* Sparkles on hover: dark stars over the lime fill. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 text-black/70">
+                <span className="v3-sparkle absolute left-10 top-3 text-sm" style={{ animationDelay: "0s" }}>✦</span>
+                <span className="v3-sparkle absolute right-8 top-6 text-base" style={{ animationDelay: "0.2s" }}>✧</span>
+                <span className="v3-sparkle absolute right-16 top-1/2 text-xs" style={{ animationDelay: "0.4s" }}>✦</span>
+                <span className="v3-sparkle absolute bottom-6 left-16 text-base" style={{ animationDelay: "0.6s" }}>✧</span>
+                <span className="v3-sparkle absolute bottom-4 right-10 text-sm" style={{ animationDelay: "0.3s" }}>✦</span>
+                <span className="v3-sparkle absolute left-1/3 top-10 text-xs" style={{ animationDelay: "0.5s" }}>✧</span>
+              </span>
               <p className="relative z-10 flex items-center gap-2 font-mono text-xs text-white/60 transition-colors duration-500 motion-reduce:transition-none group-hover:text-black/60">
                 <Envelope size={16} weight="Filled" /> Email
               </p>
@@ -511,6 +520,14 @@ export default function Home() {
                   zoom — the arrow slides diagonally instead. */}
               <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-700 opacity-0 transition-opacity duration-500 motion-reduce:transition-none group-hover:opacity-100" />
               <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-md transition-transform duration-700 motion-reduce:transition-none group-hover:translate-x-[400%]" />
+              {/* Sparkles on hover: white stars over the purple fill. */}
+              <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 text-white/90">
+                <span className="v3-sparkle absolute left-8 top-4 text-sm" style={{ animationDelay: "0.1s" }}>✦</span>
+                <span className="v3-sparkle absolute right-6 top-8 text-base" style={{ animationDelay: "0.3s" }}>✧</span>
+                <span className="v3-sparkle absolute bottom-8 left-12 text-xs" style={{ animationDelay: "0.5s" }}>✦</span>
+                <span className="v3-sparkle absolute bottom-5 right-12 text-sm" style={{ animationDelay: "0s" }}>✧</span>
+                <span className="v3-sparkle absolute left-1/2 top-3 text-xs" style={{ animationDelay: "0.4s" }}>✦</span>
+              </span>
               <p className="relative z-10 flex items-center gap-2 font-mono text-xs text-white/60 transition-colors duration-500 motion-reduce:transition-none group-hover:text-black/60">
                 <Instagram size={16} weight="Filled" /> Instagram
               </p>
