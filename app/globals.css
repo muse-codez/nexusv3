@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Archivo", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --color-ink: #0c1117;
+  --color-panel: #131a24;
+  --color-line: #233042;
+  --color-amber: #ffb703;
+  --color-mist: #9aa7b4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0c1117;
+  color: #f2f4f6;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+::selection {
+  background: #ffb703;
+  color: #0c1117;
+}
+
+.v3-fade-up {
+  animation: v3-fade-up 0.8s ease both;
+}
+
+@keyframes v3-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .v3-fade-up {
+    animation: none;
+  }
+}
