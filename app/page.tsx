@@ -7,6 +7,7 @@ import { ArrowUpRight, Envelope, Instagram, Play } from "reicon-react";
 import TargetCursor from "@/components/TargetCursor";
 import FaultyTerminal from "@/components/FaultyTerminal";
 import IntroLoader from "@/components/IntroLoader";
+import SlideToHire from "@/components/SlideToHire";
 
 // NexusFX v2 — original homepage, inspired in general structure only by
 // notenemyok.com (pill nav, full-height hero, clients panel, video grid,
@@ -475,8 +476,9 @@ export default function Home() {
       </div>
 
       {/* Hire — the TextLoop ribbon and the Three.js character were
-          both removed at the user's request. A plain heading plus
-          the unchanged contact tiles below. */}
+          both removed at the user's request. A plain heading, a
+          slide-to-hire control (pattern idea from cuedesign.space,
+          original code), and the unchanged contact tiles below. */}
       <section id="hire" className="relative z-10 pb-24">
         <div className="mx-auto max-w-5xl px-4 pt-4 text-center">
           <h2 className="font-pixelify text-4xl text-white sm:text-5xl">Hire me</h2>
@@ -492,6 +494,9 @@ export default function Home() {
           <div className="v2-pixel-corners relative mt-10 overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-800 to-zinc-900 p-6 shadow-2xl border border-zinc-400/30 sm:p-8">
             <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
               <span aria-hidden="true" className="v2-pixel-strip absolute inset-x-0 top-0 h-[6px]" />
+            <div className="relative mb-6">
+              <SlideToHire />
+            </div>
             <div className="relative grid gap-6 text-left sm:grid-cols-5">
             <div className="group relative overflow-hidden bg-zinc-900 p-8 shadow-xl ring-1 ring-zinc-700 transition-shadow duration-500 motion-reduce:transition-none hover:shadow-[0_0_40px_rgba(163,230,53,0.35)] hover:ring-lime-400/60 sm:col-span-3">
               {/* Primary tile: solid zinc at rest, lime fill on
