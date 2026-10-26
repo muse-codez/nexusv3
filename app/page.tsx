@@ -96,11 +96,12 @@ function morphText(el: MorphEl, next: string) {
   }, Math.max(ms("--text-morph-dur"), ms("--text-morph-resize-dur")) + 40);
 }
 
-// Section titles in the user's 4 colours — yellow, lime, purple,
-// blue — cycling letter by letter, so every title is colourful
-// instead of plain white. Spaces don't consume a colour, so the
-// cycle runs continuously across words.
-const TITLE_COLORS = ["text-yellow-400", "text-lime-400", "text-purple-400", "text-blue-400"];
+// Section titles in 2 colours only — yellow + purple, picked at
+// random from the user's 4 (yellow, lime, purple, blue) — cycling
+// letter by letter, so titles are colourful but not every colour.
+// Spaces don't consume a colour, so the cycle runs continuously
+// across words.
+const TITLE_COLORS = ["text-yellow-400", "text-purple-400"];
 function ColorfulTitle({ text }: { text: string }) {
   let i = 0;
   return (
