@@ -184,7 +184,7 @@ export default function Home() {
           drop shadow so it stays readable over the hero video. */}
       <header className="v2-nav-drop fixed inset-x-0 top-0 z-50 flex justify-center px-4 py-4">
         <nav className="flex w-full max-w-3xl items-center justify-between bg-transparent px-2 py-1 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]">
-          <a href="#top" data-cursor-label="Top" className="cursor-target flex items-center gap-2 transition-transform duration-300 hover:scale-105">
+          <a href="#top" className="flex items-center gap-2 transition-transform duration-300 hover:scale-105">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="NexusFX logo" className="h-8 w-8 object-cover" />
             <span className="font-pixelify text-xl font-bold text-lime-400">NexusFX</span>
@@ -192,8 +192,8 @@ export default function Home() {
           <div className="flex items-center gap-1 font-pixelify text-xs uppercase sm:gap-2 sm:text-sm">
             <a
               href="#top"
-              data-cursor-label="Home"
-              className={`cursor-target px-2 sm:px-4 py-1 transition-all duration-300 ${
+             
+              className={`px-2 sm:px-4 py-1 transition-all duration-300 ${
                 active === "top"
                   ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
                   : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
@@ -203,8 +203,8 @@ export default function Home() {
             </a>
             <a
               href="#clients"
-              data-cursor-label="Clients"
-              className={`cursor-target px-2 sm:px-4 py-1 transition-all duration-300 ${
+             
+              className={`px-2 sm:px-4 py-1 transition-all duration-300 ${
                 active === "clients"
                   ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
                   : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
@@ -214,8 +214,8 @@ export default function Home() {
             </a>
             <a
               href="#videos"
-              data-cursor-label="Videos"
-              className={`cursor-target px-2 sm:px-4 py-1 transition-all duration-300 ${
+             
+              className={`px-2 sm:px-4 py-1 transition-all duration-300 ${
                 active === "videos"
                   ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
                   : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
@@ -225,8 +225,8 @@ export default function Home() {
             </a>
             <a
               href="#hire"
-              data-cursor-label="Hire"
-              className={`cursor-target v2-shine-wrap relative overflow-hidden px-2 sm:px-4 py-1 font-bold text-white transition-all duration-300 hover:scale-105 ${
+             
+              className={`v2-shine-wrap relative overflow-hidden px-2 sm:px-4 py-1 font-bold text-white transition-all duration-300 hover:scale-105 ${
                 active === "hire"
                   ? "bg-[#3884ff] shadow-[0_0_18px_rgba(56,132,255,0.6)]"
                   : "bg-purple-700 ring-1 ring-purple-400/60 hover:bg-purple-600"
