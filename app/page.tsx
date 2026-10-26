@@ -96,6 +96,28 @@ function morphText(el: MorphEl, next: string) {
   }, Math.max(ms("--text-morph-dur"), ms("--text-morph-resize-dur")) + 40);
 }
 
+// Section titles in the user's 4 colours — yellow, lime, purple,
+// blue — cycling letter by letter, so every title is colourful
+// instead of plain white. Spaces don't consume a colour, so the
+// cycle runs continuously across words.
+const TITLE_COLORS = ["text-yellow-400", "text-lime-400", "text-purple-400", "text-blue-400"];
+function ColorfulTitle({ text }: { text: string }) {
+  let i = 0;
+  return (
+    <>
+      {text.split("").map((ch, idx) =>
+        ch === " " ? (
+          <span key={idx}> </span>
+        ) : (
+          <span key={idx} className={TITLE_COLORS[i++ % TITLE_COLORS.length]}>
+            {ch}
+          </span>
+        ),
+      )}
+    </>
+  );
+}
+
 export default function Home() {
   // Featured client tile: NO tile is featured at rest, so all six
   // tiles sit in exactly the same state. Hover (or keyboard focus)
@@ -303,8 +325,8 @@ export default function Home() {
           the corners above the curve. */}
       <section id="clients" className="relative z-20 w-full px-2 pb-24 sm:px-4">
         <motion.div style={{ y: reduceMotion ? 0 : cardY }} className="v3-arch relative w-full overflow-hidden bg-[#16161a] border border-white/10 px-4 pb-12 pt-20 sm:px-8 sm:pt-24 lg:px-12">
-          <h2 className="relative text-center font-pixelify text-4xl font-bold leading-tight tracking-wide sm:text-6xl lg:text-7xl">
-            Creators I&apos;ve worked with
+          <h2 aria-label="Creators I've worked with" className="relative text-center font-pixelify text-4xl font-bold leading-tight tracking-wide sm:text-6xl lg:text-7xl">
+            <span aria-hidden="true"><ColorfulTitle text="Creators I've worked with" /></span>
           </h2>
           <div
             className="relative mx-auto mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:w-[46%] lg:grid-cols-3"
@@ -382,8 +404,8 @@ export default function Home() {
           {/* Recent edits — v1 showcase, inside the same metal card,
               which now expands to the end of the showcase. */}
           <div id="videos" className="relative mt-16 scroll-mt-24 text-center">
-            <h2 className="mt-6 font-pixelify text-4xl font-bold leading-tight tracking-wide sm:text-6xl lg:text-7xl">
-              Recent edits
+            <h2 aria-label="Recent edits" className="mt-6 font-pixelify text-4xl font-bold leading-tight tracking-wide sm:text-6xl lg:text-7xl">
+              <span aria-hidden="true"><ColorfulTitle text="Recent edits" /></span>
             </h2>
           </div>
         <div className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -452,7 +474,7 @@ export default function Home() {
           original code), and the unchanged contact tiles below. */}
       <section id="hire" className="relative z-10 pb-24">
         <div className="mx-auto max-w-5xl px-4 pt-4 text-center">
-          <h2 className="font-pixelify text-4xl text-white sm:text-5xl">Hire me</h2>
+          <h2 aria-label="Hire me" className="font-pixelify text-4xl sm:text-5xl"><span aria-hidden="true"><ColorfulTitle text="Hire me" /></span></h2>
         </div>
         <div className="mx-auto max-w-5xl px-4">
           {/* Hire panel, inspired by the researched portfolios
