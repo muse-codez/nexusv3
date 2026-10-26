@@ -258,9 +258,16 @@ export default function Home() {
             muted
             loop
             playsInline
+            preload="auto"
+            poster="/showreel-poster.jpg"
             className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-100"
-            src="https://pub-d762446b1f924e5cabe93dad536beb79.r2.dev/Show%20reel%20(1).mp4"
-          />
+          >
+            {/* Optimized showreel, hosted in-repo (Vercel CDN) instead
+                of the 81 MB / 29 Mbps R2 original: 720p on phones,
+                1080p on larger screens, both 30fps with faststart. */}
+            <source src="/showreel-720.mp4" type="video/mp4" media="(max-width: 640px)" />
+            <source src="/showreel-1080.mp4" type="video/mp4" />
+          </video>
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 z-[1] bg-black/20" />
           <div className="group v2-fade-up relative z-10 -rotate-2 border-2 border-lime-400/60 px-6 py-8 sm:px-10">
             <span className="absolute -left-2 -top-2 h-4 w-4 bg-lime-400" />
