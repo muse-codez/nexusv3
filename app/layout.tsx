@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nexusv3-tau.vercel.app"),
   title: "NexusFX | Video Editor for YouTubers & Gaming Creators",
   description:
     "NexusFX edits high-retention YouTube and gaming videos for creators including GamerFleet and I. M. Bixu. View work, services, and hire for your next video.",
