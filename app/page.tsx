@@ -455,7 +455,7 @@ export default function Home() {
           request. A plain heading and the contact tiles below. */}
       <section id="hire" className="relative z-10 pb-24">
         <div className="mx-auto max-w-5xl px-4 pt-4 text-center">
-          <h2 className="font-pixelify text-4xl text-yellow-400 sm:text-5xl">Hire me</h2>
+          <h2 className="font-pixelify text-4xl font-bold leading-tight tracking-wide text-yellow-400 sm:text-6xl lg:text-7xl">Hire Me</h2>
         </div>
         <div className="mx-auto max-w-5xl px-4">
           {/* Hire panel, inspired by the researched portfolios
