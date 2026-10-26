@@ -339,7 +339,9 @@ export default function Home() {
                   <img
                     src={client.logo}
                     alt={client.name}
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full object-cover transition-opacity duration-500 motion-reduce:transition-none ${
+                      featured ? "opacity-100" : "opacity-0"
+                    }`}
                   />
                   {/* HUD target-lock: four corner brackets, only on hover */}
                   <span aria-hidden="true" className={`pointer-events-none absolute inset-2 transition-opacity duration-200 ${featured ? "opacity-100" : "opacity-0"}`}>
@@ -348,37 +350,30 @@ export default function Home() {
                     <span className="absolute bottom-0 left-0 h-5 w-5 border-b-2 border-l-2 border-lime-400" />
                     <span className="absolute bottom-0 right-0 h-5 w-5 border-b-2 border-r-2 border-lime-400" />
                   </span>
-                  {/* Scanline: sweeps top to bottom once per hover entry */}
-                  {featured && (
-                    <span aria-hidden="true" className="v2-tile-scan pointer-events-none absolute inset-x-0 h-[2px] bg-lime-400 shadow-[0_0_12px_rgba(163,230,53,0.9)]" />
-                  )}
-                  {/* Rest name: always readable, so the grid reads as
-                      creators at a glance instead of just logos —
-                      a Pixelify name with a lime dot over a soft
-                      gradient. It fades out as the hover info
-                      wipes in, so the two never stack. */}
+                  {/* Rest state: creator hidden behind a question mark
+                      in the tile's accent colour. No photo, no name —
+                      hover/focus reveals both. */}
                   <span
                     aria-hidden="true"
-                    className={`pointer-events-none absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-2.5 pt-6 text-left transition-opacity duration-300 ${
+                    className={`pointer-events-none absolute inset-0 flex items-center justify-center font-pixelify text-7xl font-bold transition-opacity duration-300 motion-reduce:transition-none ${accent.text} ${
                       featured ? "opacity-0" : "opacity-100"
                     }`}
                   >
-                    <span className="flex items-center gap-1.5 font-pixelify text-sm text-white">
-                      <span className={`h-1.5 w-1.5 shrink-0 ${accent.dot}`} />
-                      {client.name}
-                    </span>
+                    ?
                   </span>
-                  {/* Hover info: revealed by a left-to-right wipe, not a
-                      slide/fade — name gets a short glitch flicker.
-                      Name now matches the rest strip (Pixelify) and
-                      subs are mono, for a HUD-style info panel. */}
+                  {/* Hover info: NEW animation, replacing the old
+                      left-to-right wipe + glitch. The whole panel
+                      rises from the bottom and fades in, then name,
+                      desc and subs follow one by one (staggered
+                      rise). No zoom anywhere, reduced-motion safe. */}
                   <span
-                    className="v2-wipe absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/95 via-black/70 to-transparent px-3 pb-3 pt-8 text-left"
-                    style={{ clipPath: featured ? "inset(0 0 0 0)" : "inset(0 100% 0 0)" }}
+                    className={`absolute inset-x-0 bottom-0 block bg-gradient-to-t from-black/95 via-black/70 to-transparent px-3 pb-3 pt-8 text-left transition-all duration-500 motion-reduce:transition-none ${
+                      featured ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
+                    }`}
                   >
-                    <span className={`block font-pixelify text-sm text-white ${featured ? "v2-glitch" : ""}`}>{client.name}</span>
-                    <span className="mt-0.5 block text-xs leading-snug text-white/80">{client.desc}</span>
-                    <span className={`mt-1 block font-mono text-[11px] font-semibold ${accent.text}`}>{client.subs}</span>
+                    <span className={`block font-pixelify text-sm text-white transition-all duration-500 motion-reduce:transition-none ${featured ? "translate-y-0 opacity-100 delay-0" : "translate-y-2 opacity-0"}`}>{client.name}</span>
+                    <span className={`mt-0.5 block text-xs leading-snug text-white/80 transition-all duration-500 motion-reduce:transition-none ${featured ? "translate-y-0 opacity-100 delay-75" : "translate-y-2 opacity-0"}`}>{client.desc}</span>
+                    <span className={`mt-1 block font-mono text-[11px] font-semibold transition-all duration-500 motion-reduce:transition-none ${accent.text} ${featured ? "translate-y-0 opacity-100 delay-150" : "translate-y-2 opacity-0"}`}>{client.subs}</span>
                   </span>
                 </a>
               );
