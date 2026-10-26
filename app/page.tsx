@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import Lenis from "lenis";
 import { ArrowUpRight, Envelope, Instagram, Play } from "reicon-react";
 
 import TargetCursor from "@/components/TargetCursor";
@@ -101,6 +102,42 @@ function morphText(el: MorphEl, next: string) {
 // user's 4), cycled across titles: Creators yellow, Recent purple,
 // Hire yellow.
 export default function Home() {
+  // Smooth animation, site-wide: Lenis smooth scrolling. It was
+  // already installed but never wired in, so wheel + anchor scroll
+  // were native/snappy. Lenis eases every scroll with an expo-out
+  // curve (1.2s), and navbar anchor clicks glide via scrollTo
+  // instead of jumping. Reduced-motion users get native scroll.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+    let rafId = 0;
+    const raf = (time: number) => {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    };
+    rafId = requestAnimationFrame(raf);
+    const onAnchorClick = (e: MouseEvent) => {
+      const anchor = (e.target as HTMLElement).closest?.('a[href^="#"]');
+      if (!anchor) return;
+      const id = anchor.getAttribute("href");
+      if (!id || id === "#") return;
+      const el = document.querySelector(id);
+      if (!el) return;
+      e.preventDefault();
+      lenis.scrollTo(el as HTMLElement, { offset: -80 });
+    };
+    document.addEventListener("click", onAnchorClick);
+    return () => {
+      document.removeEventListener("click", onAnchorClick);
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+    };
+  }, []);
+
   // Featured client tile: NO tile is featured at rest, so all six
   // tiles sit in exactly the same state. Hover (or keyboard focus)
   // features a tile, and leaving it clears the feature again.
