@@ -5,7 +5,7 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "mo
 import { ArrowUpRight, Envelope, Instagram, Play } from "reicon-react";
 
 import TargetCursor from "@/components/TargetCursor";
-import FaultyTerminal from "@/components/FaultyTerminal";
+
 import IntroLoader from "@/components/IntroLoader";
 import SlideToHire from "@/components/SlideToHire";
 
@@ -128,7 +128,6 @@ export default function Home() {
   // 150px from the viewport top (navbar height + margin).
   // Order matters because #videos sits inside #clients.
   const [active, setActive] = useState("top");
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const onScroll = () => {
@@ -138,7 +137,6 @@ export default function Home() {
         if (el && el.getBoundingClientRect().top <= 150) current = id;
       }
       setActive(current);
-      setScrolled(window.scrollY > 80);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -176,45 +174,16 @@ export default function Home() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-[#0a0a0a] via-[#0d0d0d] to-black font-sans text-white">
+    <div className="relative min-h-screen bg-[#0a0a0a] font-sans text-white">
       <TargetCursor spinDuration={2} hideDefaultCursor parallaxOn cursorColor="#ffffff" cursorColorOnTarget="#a3e635" />
       {/* Intro loader: black screen, flipping zoom-in logo, then
           fades away to reveal this page rendered underneath. */}
       <IntroLoader />
-      {/* Main background: React Bits FaultyTerminal, fixed behind
-          all content. Props are the usage example as given. */}
-      <div aria-hidden="true" className="fixed inset-0 z-0">
-        <FaultyTerminal
-          tint="#A7EF9E"
-          glyphs="blocks"
-          scale={1.5}
-          digitSize={1.2}
-          timeScale={0.5}
-          brightness={0.75}
-          glow={0.5}
-          persistence={0.5}
-          mouseStrength={0.5}
-          mouseGlow={0.6}
-          curvature={0.1}
-          vignette={0.25}
-          clickEffect="glitch"
-        />
-      </div>
-      {/* Navbar: at the top it stays flat and transparent, so
-          the hero video shows through. Past 80px of scroll it
-          pops in (v2-nav-pop) as a dark glass pixel bar: zinc-900
-          at 80% with blur, border and shadow, same max-w-3xl
-          width so it does not jump. This supersedes the
-          earlier "never a background" state — the user now
-          asked for a background on scroll. */}
+      {/* Navbar: always transparent, no background at any scroll
+          position — cleared in the v3 redesign. Text gets a soft
+          drop shadow so it stays readable over the hero video. */}
       <header className="v2-nav-drop fixed inset-x-0 top-0 z-50 flex justify-center px-4 py-4">
-        <nav
-          className={`flex w-full max-w-3xl items-center justify-between transition-all duration-500 ${
-            scrolled
-              ? "v2-nav-pop v2-pixel-corners bg-zinc-900/80 px-4 py-2 shadow-xl shadow-black/40 border border-white/10 backdrop-blur-md"
-              : "bg-transparent px-2 py-1"
-          }`}
-        >
+        <nav className="flex w-full max-w-3xl items-center justify-between bg-transparent px-2 py-1 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)]">
           <a href="#top" data-cursor-label="Top" className="cursor-target flex items-center gap-2 transition-transform duration-300 hover:scale-105">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="NexusFX logo" className="h-8 w-8 object-cover" />
@@ -224,7 +193,7 @@ export default function Home() {
             <a
               href="#top"
               data-cursor-label="Home"
-              className={`cursor-target px-4 py-1 transition-all duration-300 ${
+              className={`cursor-target px-2 sm:px-4 py-1 transition-all duration-300 ${
                 active === "top"
                   ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
                   : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
@@ -235,7 +204,7 @@ export default function Home() {
             <a
               href="#clients"
               data-cursor-label="Clients"
-              className={`cursor-target px-4 py-1 transition-all duration-300 ${
+              className={`cursor-target px-2 sm:px-4 py-1 transition-all duration-300 ${
                 active === "clients"
                   ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
                   : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
@@ -246,7 +215,7 @@ export default function Home() {
             <a
               href="#videos"
               data-cursor-label="Videos"
-              className={`cursor-target px-4 py-1 transition-all duration-300 ${
+              className={`cursor-target px-2 sm:px-4 py-1 transition-all duration-300 ${
                 active === "videos"
                   ? "bg-[#3884ff] font-bold text-white shadow-[0_0_18px_rgba(56,132,255,0.6)] hover:scale-105"
                   : "text-white/80 hover:scale-105 hover:bg-white/10 hover:text-white"
@@ -257,10 +226,10 @@ export default function Home() {
             <a
               href="#hire"
               data-cursor-label="Hire"
-              className={`cursor-target v2-shine-wrap relative overflow-hidden px-4 py-1 font-bold text-white transition-all duration-300 hover:scale-105 ${
+              className={`cursor-target v2-shine-wrap relative overflow-hidden px-2 sm:px-4 py-1 font-bold text-white transition-all duration-300 hover:scale-105 ${
                 active === "hire"
                   ? "bg-[#3884ff] shadow-[0_0_18px_rgba(56,132,255,0.6)]"
-                  : "bg-[#5b1a3a] ring-1 ring-pink-500/60 hover:bg-pink-600"
+                  : "bg-purple-700 ring-1 ring-purple-400/60 hover:bg-purple-600"
               }`}
             >
               hire <span aria-hidden="true" className="v2-shine-beam" />
@@ -278,13 +247,10 @@ export default function Home() {
         style={{ opacity: reduceMotion ? 1 : heroOpacity }}
         className="sticky top-0 z-10 flex min-h-screen flex-col items-center justify-center text-center"
       >
-        {/* Hero card, edge to edge, covering the full hero area
-            like the reference: full viewport width AND full
-            viewport height, so no background strip shows above
-            or below it. The showreel video and the title both
-            sit inside this card — title over the video, as the
-            user picked. */}
-        <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden shadow-2xl ring-1 ring-zinc-400/30">
+        {/* Hero: the showreel video IS the background now — no card
+            frame, ring, or shadow around it. Title sits over the
+            video, as before. */}
+        <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden">
           {/* Hero video: NexusFX showreel, user-supplied R2 link.
               Hotlinked (not copied into the repo). */}
           <video
@@ -316,7 +282,6 @@ export default function Home() {
             <p className="mt-6 font-minecraft text-sm leading-relaxed text-lime-300 sm:text-base">
               edits that hold attention
             </p>
-            <div aria-hidden="true" className="v2-pixel-strip mx-auto mt-5 h-[6px] w-40" />
           </div>
           <p className="v2-bounce-soft absolute bottom-6 z-10 bg-white/10 px-4 py-1 font-mono text-xs text-white/70 backdrop-blur">
             scroll ↓
@@ -324,17 +289,15 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Clients — contained dark panel, square edge-to-edge tiles */}
+      {/* Clients — inverted-U (arch-top) matte card. It still slides
+          up over the hero on scroll (cardY), but the metal gradient,
+          sheen, pixel corners and pixel strip are cleared: flat matte
+          #16161a, no gloss. The arch top lets the hero video show in
+          the corners above the curve. */}
       <section id="clients" className="relative z-20 w-full px-2 pb-24 sm:px-4">
-        <motion.div style={{ y: reduceMotion ? 0 : cardY }} className="v2-pixel-corners relative w-full overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-800 to-zinc-900 p-8 shadow-2xl border border-zinc-400/30 sm:p-12">
-          <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
-          <span aria-hidden="true" className="v2-pixel-strip absolute inset-x-0 top-0 h-[6px]" />
-          <span aria-hidden="true" className="absolute left-4 top-3 text-sm text-white/30">✦</span>
-          <span aria-hidden="true" className="absolute right-4 top-3 text-sm text-white/30">✦</span>
-          <span aria-hidden="true" className="absolute bottom-3 left-4 text-sm text-white/30">✦</span>
-          <span aria-hidden="true" className="absolute bottom-3 right-4 text-sm text-white/30">✦</span>
-          <h2 className="relative text-center font-pixelify text-5xl font-bold leading-tight tracking-wide sm:text-7xl">
-            <span className="v2-clay-title inline-block px-10 py-3">Creators I&apos;ve worked with</span>
+        <motion.div style={{ y: reduceMotion ? 0 : cardY }} className="v3-arch relative w-full overflow-hidden bg-[#16161a] border border-white/10 px-4 pb-12 pt-20 sm:px-8 sm:pt-24 lg:px-12">
+          <h2 className="relative text-center font-pixelify text-4xl font-bold leading-tight tracking-wide sm:text-6xl lg:text-7xl">
+            Creators I&apos;ve worked with
           </h2>
           <div
             className="relative mx-auto mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:w-[46%] lg:grid-cols-3"
@@ -342,6 +305,14 @@ export default function Home() {
           >
             {CLIENTS.map((client, index) => {
               const featured = featuredClient === index;
+              // Accent rotation across the four palette colours:
+              // yellow, lime, purple, blue — one per tile.
+              const accent = [
+                { ring: "ring-yellow-400/80", shadow: "shadow-[0_0_28px_rgba(250,204,21,0.35)]", dot: "bg-yellow-400", text: "text-yellow-300", focus: "focus-visible:ring-yellow-400" },
+                { ring: "ring-lime-400/80", shadow: "shadow-[0_0_28px_rgba(163,230,53,0.35)]", dot: "bg-lime-400", text: "text-lime-300", focus: "focus-visible:ring-lime-400" },
+                { ring: "ring-purple-400/80", shadow: "shadow-[0_0_28px_rgba(192,132,252,0.35)]", dot: "bg-purple-400", text: "text-purple-300", focus: "focus-visible:ring-purple-400" },
+                { ring: "ring-blue-400/80", shadow: "shadow-[0_0_28px_rgba(96,165,250,0.35)]", dot: "bg-blue-400", text: "text-blue-300", focus: "focus-visible:ring-blue-400" },
+              ][index % 4];
               return (
                 <a
                   key={client.name}
@@ -352,19 +323,17 @@ export default function Home() {
                   onMouseEnter={() => setFeaturedClient(index)}
                   onFocus={() => setFeaturedClient(index)}
                   onBlur={() => setFeaturedClient(null)}
-                  className={`cursor-target relative aspect-square overflow-hidden bg-zinc-900 shadow-lg ring-1 ring-zinc-300/40 transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400 ${
+                  className={`cursor-target relative aspect-square overflow-hidden bg-zinc-900 shadow-lg ring-1 ring-zinc-300/40 transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 ${accent.focus} ${
                     featured
-                      ? "z-10 ring-2 ring-lime-400/80 shadow-[0_0_28px_rgba(163,230,53,0.35)]"
+                      ? `z-10 ring-2 ${accent.ring} ${accent.shadow}`
                       : ""
                   }`}
                 >
                   <img
                     src={client.logo}
                     alt={client.name}
-                    className="h-full w-full object-cover" 
+                    className="h-full w-full object-cover"
                   />
-                  {/* Metal shine: bright top-left sweep over the tile */}
-                  <span className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/40 via-white/5 to-black/25" />
                   {/* HUD target-lock: four corner brackets, only on hover */}
                   <span aria-hidden="true" className={`pointer-events-none absolute inset-2 transition-opacity duration-200 ${featured ? "opacity-100" : "opacity-0"}`}>
                     <span className="absolute left-0 top-0 h-5 w-5 border-l-2 border-t-2 border-lime-400" />
@@ -388,7 +357,7 @@ export default function Home() {
                     }`}
                   >
                     <span className="flex items-center gap-1.5 font-pixelify text-sm text-white">
-                      <span className="h-1.5 w-1.5 shrink-0 bg-lime-400" />
+                      <span className={`h-1.5 w-1.5 shrink-0 ${accent.dot}`} />
                       {client.name}
                     </span>
                   </span>
@@ -402,7 +371,7 @@ export default function Home() {
                   >
                     <span className={`block font-pixelify text-sm text-white ${featured ? "v2-glitch" : ""}`}>{client.name}</span>
                     <span className="mt-0.5 block text-xs leading-snug text-white/80">{client.desc}</span>
-                    <span className="mt-1 block font-mono text-[11px] font-semibold text-lime-300">{client.subs}</span>
+                    <span className={`mt-1 block font-mono text-[11px] font-semibold ${accent.text}`}>{client.subs}</span>
                   </span>
                 </a>
               );
@@ -411,12 +380,12 @@ export default function Home() {
           {/* Recent edits — v1 showcase, inside the same metal card,
               which now expands to the end of the showcase. */}
           <div id="videos" className="relative mt-16 scroll-mt-24 text-center">
-            <h2 className="mt-6 font-pixelify text-5xl font-bold leading-tight tracking-wide sm:text-7xl">
-              <span className="v2-clay-title inline-block px-10 py-3">Recent edits</span>
+            <h2 className="mt-6 font-pixelify text-4xl font-bold leading-tight tracking-wide sm:text-6xl lg:text-7xl">
+              Recent edits
             </h2>
           </div>
         <div className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {VIDEOS.map((video) => (
+          {VIDEOS.map((video, vi) => (
             <article key={video.id}>
               <div className="relative aspect-video overflow-hidden bg-black shadow-lg ring-1 ring-zinc-300/40">
                 {playingId === video.id ? (
@@ -443,7 +412,7 @@ export default function Home() {
                       className="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-80"
                     />
                     <span className="absolute inset-0 flex items-center justify-center">
-                      <span className="flex h-14 w-14 items-center justify-center bg-black text-white ring-1 ring-white/60 transition duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.18] group-hover:bg-[#f7078e] group-hover:shadow-[0_0_20px_rgba(247,7,142,0.85)]">
+                      <span className={`flex h-14 w-14 items-center justify-center bg-black text-white ring-1 ring-white/60 transition duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.18] ${["group-hover:bg-yellow-400 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(250,204,21,0.85)]", "group-hover:bg-lime-400 group-hover:text-black group-hover:shadow-[0_0_20px_rgba(163,230,53,0.85)]", "group-hover:bg-purple-500 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.85)]", "group-hover:bg-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.85)]"][vi % 4]}`}>
                         <Play size={24} weight="Filled" />
                       </span>
                     </span>
@@ -491,9 +460,7 @@ export default function Home() {
               panel holding the two contact tiles, so hire reads
               as one section instead of floating tiles. No site's
               layout or wording copied; no new copy added. */}
-          <div className="v2-pixel-corners relative mt-10 overflow-hidden bg-gradient-to-br from-zinc-700 via-zinc-800 to-zinc-900 p-6 shadow-2xl border border-zinc-400/30 sm:p-8">
-            <span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent" />
-              <span aria-hidden="true" className="v2-pixel-strip absolute inset-x-0 top-0 h-[6px]" />
+          <div className="relative mt-10 overflow-hidden bg-[#16161a] p-6 border border-white/10 sm:p-8">
             <div className="relative mb-6">
               <SlideToHire />
             </div>
@@ -535,18 +502,18 @@ export default function Home() {
               target="_blank"
               rel="noreferrer"
               data-cursor-label="Instagram"
-              className="cursor-target group relative overflow-hidden bg-zinc-900 p-8 shadow-xl ring-1 ring-zinc-700 transition-shadow duration-500 motion-reduce:transition-none hover:shadow-[0_0_40px_rgba(247,7,142,0.35)] hover:ring-pink-500/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 sm:col-span-2"
+              className="cursor-target group relative overflow-hidden bg-zinc-900 p-8 shadow-xl ring-1 ring-zinc-700 transition-shadow duration-500 motion-reduce:transition-none hover:shadow-[0_0_40px_rgba(168,85,247,0.35)] hover:ring-purple-500/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900 sm:col-span-2"
             >
               {/* Secondary tile: same solid + fill + shine language
                   as email, but pink (not a lime copy), no fire, no
                   zoom — the arrow slides diagonally instead. */}
-              <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-pink-400 via-[#f7078e] to-pink-600 opacity-0 transition-opacity duration-500 motion-reduce:transition-none group-hover:opacity-100" />
+              <span aria-hidden="true" className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-700 opacity-0 transition-opacity duration-500 motion-reduce:transition-none group-hover:opacity-100" />
               <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-md transition-transform duration-700 motion-reduce:transition-none group-hover:translate-x-[400%]" />
               <p className="relative z-10 flex items-center gap-2 font-mono text-xs text-white/60 transition-colors duration-500 motion-reduce:transition-none group-hover:text-black/60">
                 <Instagram size={16} weight="Filled" /> Instagram
               </p>
               <p className="relative z-10 mt-3 font-pixelify text-xl text-white transition-colors duration-500 motion-reduce:transition-none group-hover:text-black">@nexu.fx4</p>
-              <span className="relative z-10 mt-6 inline-flex items-center gap-1 bg-white/10 px-5 py-2 text-sm font-semibold text-pink-400 ring-1 ring-white/20 transition duration-150 group-hover:bg-black/10 group-hover:text-black group-hover:ring-black/20">
+              <span className="relative z-10 mt-6 inline-flex items-center gap-1 bg-white/10 px-5 py-2 text-sm font-semibold text-purple-400 ring-1 ring-white/20 transition duration-150 group-hover:bg-black/10 group-hover:text-black group-hover:ring-black/20">
                 Visit profile <span className="inline-block transition-transform duration-300 motion-reduce:transition-none group-hover:-translate-y-0.5 group-hover:translate-x-0.5"><ArrowUpRight size={16} weight="Filled" /></span>
               </span>
             </a>

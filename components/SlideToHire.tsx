@@ -92,7 +92,7 @@ export default function SlideToHire() {
       >
         {/* Fill */}
         <div
-          className="absolute inset-y-0 left-0 bg-lime-400"
+          className="absolute inset-y-0 left-0 bg-yellow-400"
           style={{ width: `${progress * 100}%` }}
           aria-hidden="true"
         />
@@ -112,7 +112,7 @@ export default function SlideToHire() {
           aria-valuenow={Math.round(progress * 100)}
           tabIndex={0}
           onKeyDown={onKeyDown}
-          className="absolute top-0 grid h-14 w-14 cursor-grab place-items-center bg-black text-xl text-lime-400 ring-1 ring-lime-400/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-400 active:cursor-grabbing motion-reduce:transition-none"
+          className="absolute top-0 grid h-14 w-14 cursor-grab place-items-center bg-black text-xl text-yellow-400 ring-1 ring-yellow-400/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 active:cursor-grabbing motion-reduce:transition-none"
           style={{
             left: `calc(${progress * 100}% - ${progress * 56}px)`,
             transition: dragging ? "none" : "left 0.3s ease",

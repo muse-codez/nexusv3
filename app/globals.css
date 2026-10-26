@@ -202,52 +202,25 @@ body {
   animation: v2-nav-drop 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Navbar scroll pop: when the background appears on scroll,
-   the bar pops in slightly (0.96 -> 1.02 -> 1) instead of
-   just fading in. */
-@keyframes v2-nav-pop {
-  0% {
-    transform: scale(0.96);
-  }
-  60% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
+/* v3 redesign: inverted-U card. The top edge is one wide arch
+   (horizontal radius 50% of the card, vertical radius = arch
+   height), bottom stays square. Arch height is smaller on mobile
+   so the curve never eats the content on a narrow screen. */
+.v3-arch {
+  border-top-left-radius: 50% 64px;
+  border-top-right-radius: 50% 64px;
+}
+@media (min-width: 640px) {
+  .v3-arch {
+    border-top-left-radius: 50% 100px;
+    border-top-right-radius: 50% 100px;
   }
 }
-
-.v2-nav-pop {
-  animation: v2-nav-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Pixel design, corrected: pixels are MANY small squares, like
-   the boxes a pixel font is built from — not one big square
-   box. So corners are a staircase of 4px steps (3 small squares
-   per corner), cards carry a texture of tiny 4px squares, and
-   strips are rows of alternating 6px squares. */
-.v2-pixel-corners {
-  clip-path: polygon(
-    0 12px, 4px 12px, 4px 8px, 8px 8px, 8px 4px, 12px 4px, 12px 0,
-    calc(100% - 12px) 0, calc(100% - 12px) 4px, calc(100% - 8px) 4px,
-    calc(100% - 8px) 8px, calc(100% - 4px) 8px, calc(100% - 4px) 12px, 100% 12px,
-    100% calc(100% - 12px), calc(100% - 4px) calc(100% - 12px),
-    calc(100% - 4px) calc(100% - 8px), calc(100% - 8px) calc(100% - 8px),
-    calc(100% - 8px) calc(100% - 4px), calc(100% - 12px) calc(100% - 4px),
-    calc(100% - 12px) 100%, 12px 100%, 12px calc(100% - 4px),
-    8px calc(100% - 4px), 8px calc(100% - 8px), 4px calc(100% - 8px),
-    4px calc(100% - 12px), 0 calc(100% - 12px)
-  );
-}
-
-/* Pixel strip: a row of alternating 6px lime / pink squares
-   with 6px gaps — many small pixels in a line, not a solid bar. */
-.v2-pixel-strip {
-  background-image: repeating-linear-gradient(
-    to right,
-    #a3e635 0 6px, transparent 6px 12px,
-    #f7078e 12px 18px, transparent 18px 24px
-  );
+@media (min-width: 1024px) {
+  .v3-arch {
+    border-top-left-radius: 50% 140px;
+    border-top-right-radius: 50% 140px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -257,8 +230,7 @@ body {
   .v2-gradient-text,
   .v2-bounce-soft,
   .v2-intro-flip,
-  .v2-nav-drop,
-  .v2-nav-pop {
+  .v2-nav-drop {
     animation: none;
   }
   .group:hover .v2-shine-beam,
