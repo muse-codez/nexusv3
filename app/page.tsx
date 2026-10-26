@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowUpRight, Envelope, Instagram, Play } from "reicon-react";
-import HireCharacter from "@/components/HireCharacter";
+
 import TargetCursor from "@/components/TargetCursor";
 import FaultyTerminal from "@/components/FaultyTerminal";
 import IntroLoader from "@/components/IntroLoader";
@@ -474,12 +474,11 @@ export default function Home() {
       </section>
       </div>
 
-      {/* Hire — the TextLoop wave ribbon was removed at the user's
-          request and replaced with an original Three.js character
-          that waves hello. Contact tiles below are unchanged. */}
+      {/* Hire — the TextLoop ribbon and the Three.js character were
+          both removed at the user's request. A plain heading plus
+          the unchanged contact tiles below. */}
       <section id="hire" className="relative z-10 pb-24">
         <div className="mx-auto max-w-5xl px-4 pt-4 text-center">
-          <HireCharacter />
           <h2 className="font-pixelify text-4xl text-white sm:text-5xl">Hire me</h2>
         </div>
         <div className="mx-auto max-w-5xl px-4">
